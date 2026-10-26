@@ -1,5 +1,7 @@
 # Capability gate — 26 October 2026
 
+Latest conversational session and same-plugin execution investigation: [CONVERSATIONAL_PLANNER.md](docs/CONVERSATIONAL_PLANNER.md) and [PLUGIN_EXECUTION.md](docs/PLUGIN_EXECUTION.md). The owner accepted ORY as a distinct alternative; its public flight total and whole-stay hotel prices produce a validated quoted subtotal, not a final payable price.
+
 Remote main inspected through GitHub and fetched through Git: `a799972545e41563a964338f21b280c42375aa85`.
 
 ## Separate surfaces
@@ -11,7 +13,7 @@ Remote main inspected through GitHub and fetched through Git: `a799972545e41563a
 
 | Provider | Conversation status | Necessary parameters / constraints | Worker status |
 | --- | --- | --- | --- |
-| Booking.com | callable_interactively, two successful searches | Exact stays, 2 adults, 1 room, EUR; country must be lowercase `fr` (uppercase failed validation). `price.book` includes legally required displayed charges, but other charges may apply. Exposed schema does not explicitly identify night vs stay basis; do not guess. Preserve URLs/attribution. | not_discovered; catalog tested_failed |
+| Booking.com | callable_interactively, two successful searches | Exact stays, 2 adults, 1 room, EUR; country must be lowercase `fr` (uppercase failed validation). `price.book` includes legally required displayed charges, but other charges may apply. The parent price schema explicitly describes the total cost for the query, so the latest session treats it as the displayed whole-stay total; other charges/eligibility remain unresolved. Earlier interpretation was overly restrictive. Preserve URLs/attribution. | not_discovered; catalog tested_failed |
 | Trip.com flights | callable_interactively, 9 options | Exact round trip, CDG/JED, two adults, checked-baggage filter. Response USD despite French locale; preserved as returned. `perTraveler` label conflicts with generic schema “total price”; no assumed group multiplier. Some outbound flights arrive next day; hotels must follow the actual flight. | not_discovered; catalog tested_failed |
 | eDreams | callable_interactively, 10 itineraries | Explicit ordinary per-person and booking totals; Prime is membership-only. Returned sample flights depart ORY despite CDG query: reject mismatches. Baggage not verified. Returned clickout has Prime-related parameters; never rewrite it to pretend it is an ordinary-fare link. | not_discovered; catalog tested_failed |
 | Skyscanner | discovered; output_incompatible for proposed aggregation | Live search must be final assistant action; widget only; at most one per prompt. Not invoked: continuing implementation after the call would break that requirement. | not_discovered; catalog tested_failed |

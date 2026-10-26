@@ -2,7 +2,9 @@
 
 Private English-language Omra planning proof. No reservations or payments. Node >=24.
 
-**Current verdict:** real travel searches succeeded in the conversation, but unattended CLI provider access is blocked by a freshly observed catalog HTTP 451 (`no_biscuit_no_service`). There is no permanent deployment URL.
+**Current priority: plugin-only conversational planner.** An owner-approved Paris-Orly session now has real eDreams flights, both Booking.com stays, XE conversion and a validated **EUR 1,500.77 quoted subtotal for two adults**; final payable extras remain unknown. See [the session and workflow](docs/CONVERSATIONAL_PLANNER.md).
+
+Unattended access to those same plugins is still unproven: CLI catalog HTTP 451 (`no_biscuit_no_service`). [Documented execution paths](docs/PLUGIN_EXECUTION.md) were investigated without supplier APIs or separately configured supplier MCPs. **Hosting and UI work are paused** until a same-plugin worker invocation is demonstrated. There is no permanent deployment URL.
 
 Implemented:
 - Fastify password/session API, strict inputs, origin/ownership checks and durable SQLite queue.

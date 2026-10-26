@@ -10,6 +10,7 @@
     "start": "tsx src/server.ts",
     "worker": "tsx src/worker.ts",
     "test": "node --import tsx --test tests/*.test.ts",
+    "validate:conversation": "node --import tsx scripts/validate-conversation.ts",
     "test:browser": "node scripts/browser-smoke.mjs",
     "check": "tsc --noEmit",
     "doctor": "node --import tsx scripts/doctor.ts",

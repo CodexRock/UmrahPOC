@@ -1,5 +1,7 @@
 # Feasibility — 26 October 2026
 
+**Latest owner direction: plugin-only; hosting/UI work paused.** The approved ORY conversational variant now has a validated quoted subtotal of EUR 1,500.77 (EUR 750.39 average per adult), from ordinary eDreams group fare + both Booking stays + actual XE conversion. Final payable fees/conditions and transfers remain unresolved. See [the current session](docs/CONVERSATIONAL_PLANNER.md) and [documented execution findings](docs/PLUGIN_EXECUTION.md). The CDG investigation and deployment sequence below are historical context, not authorization to change the integration model or resume hosting work.
+
 ## Infrastructure: PARTIAL
 
 Authenticated webpage → durable SQLite job → worker capability process → stored blocked diagnostic → webpage is implemented and HTTP-tested, including restart. No full unattended Codex travel job has run. The current cloud execution workspace is temporary; no permanent HTTPS application URL or persistent host has been established. Docker verification is recorded in TEST_REPORT.md separately.
