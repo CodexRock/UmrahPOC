@@ -16,3 +16,13 @@ Connectez-vous, choisissez des dates futures (au moins sept nuits de séjour pou
 Ce prototype ne renvoie actuellement aucun vol, hôtel ou prix. Il permet de tester la saisie, la validation et le traitement des demandes. Il n’inclut pas de fausses offres. Pour vérifier automatiquement ces composants : `npm test` et `npm run check`.
 
 Une recherche réelle nécessitera une installation Codex autorisée dont le catalogue de plugins fonctionne, puis la validation des six fournisseurs et l’implémentation des adaptateurs. Aucun compte cloud payant n’est nécessaire pour ce test local.
+
+## Si votre ordinateur utilise Node.js 20
+
+Sans remplacer Node pour vos autres projets, lancez cette application avec Node 24 :
+
+```powershell
+npx --yes --package=node@24 -- node scripts/dev.mjs
+```
+
+Cette commande télécharge Node 24 dans le cache npm et l’utilise pour le serveur et le worker. Les avertissements EBADENGINE de `npm ci` exécuté avec Node 20 restent possibles ; ils ne doivent pas être confondus avec un échec de téléchargement. Ne lancez pas `npm audit fix --force` : les versions corrigées sont déjà épinglées dans le dépôt.
