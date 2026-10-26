@@ -1,0 +1,19 @@
+import Fastify from 'fastify';
+import {randomBytes,scryptSync,timingSafeEqual,createHmac} from 'node:crypto';
+import {readFileSync} from 'node:fs';
+import {Store,dbPath} from './store.js';
+import {RequestSchema} from './contracts.js';
+const password=process.env.SITE_PASSWORD,secret=process.env.SESSION_SECRET;
+if(!password||password.length<12||!secret||secret.length<32)throw Error('Set SITE_PASSWORD (12+ chars) and SESSION_SECRET (32+ chars) securely');
+const expected=scryptSync(password,'umrah-private-proof',32),store=new Store(dbPath),app=Fastify({bodyLimit:8192,logger:false});
+const secure=process.env.COOKIE_SECURE!=='false';const attempts=new Map<string,{n:number,until:number}>();
+const sign=(value:string)=>createHmac('sha256',secret).update(value).digest('hex');
+app.decorateRequest('owner','');
+declare module 'fastify'{interface FastifyRequest{owner:string}}
+app.addHook('onRequest',async(req,reply)=>{reply.header('Cache-Control','no-store').header('X-Content-Type-Options','nosniff').header('Content-Security-Policy',"default-src 'self'; script-src 'self'; style-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'");if(!req.url.startsWith('/api/'))return;const now=Date.now();if(attempts.size>10000)for(const [k,v] of attempts)if(v.until<now)attempts.delete(k);let rate=attempts.get(req.ip);if(!rate||rate.until<now){rate={n:0,until:now+60000};attempts.set(req.ip,rate);}if(++rate.n>60)return reply.code(429).send({error:'Rate limit'});if(req.method==='POST'&&req.headers.origin!==process.env.APP_ORIGIN)return reply.code(403).send({error:'Origin rejected'});if(req.url==='/api/login')return;const cookie=req.headers.cookie?.match(/(?:^|; )session=([^;]+)/)?.[1]??'';const [id,expires,mac]=cookie.split('.');const data=`${id}.${expires}`;if(!id||!expires||!mac||!/^\d+$/.test(expires)||Number(expires)<now||! /^[a-f0-9]{64}$/.test(mac)||!timingSafeEqual(Buffer.from(mac),Buffer.from(sign(data))))return reply.code(401).send({error:'Sign in required'});req.owner=id;});
+app.post('/api/login',async(req,reply)=>{const body=req.body as {password?:unknown};const supplied=typeof body?.password==='string'?body.password:'';if(!timingSafeEqual(expected,scryptSync(supplied,'umrah-private-proof',32)))return reply.code(401).send({error:'Invalid password'});const token=`${randomBytes(24).toString('hex')}.${Date.now()+8*3600000}`;reply.header('Set-Cookie',`session=${token}.${sign(token)}; HttpOnly; SameSite=Strict; Path=/; Max-Age=28800${secure?'; Secure':''}`);return {ok:true};});
+app.post('/api/jobs',async(req,reply)=>{const parsed=RequestSchema.safeParse(req.body);if(!parsed.success)return reply.code(400).send({error:parsed.error.issues});const key=req.headers['idempotency-key'];if(typeof key!=='string'||! /^[a-zA-Z0-9-]{8,100}$/.test(key))return reply.code(400).send({error:'Invalid idempotency key'});try{const job=store.submit(req.owner,key,parsed.data);return reply.code(202).send({id:job.id,state:job.state});}catch(e){const msg=(e as Error).message;return reply.code(msg==='Queue full'?429:409).send({error:msg});}});
+app.get('/api/jobs/:id',async(req,reply)=>{const job=store.get((req.params as {id:string}).id,req.owner);if(!job)return reply.code(404).send({error:'Not found'});return {id:job.id,state:job.state,result:job.result?JSON.parse(String(job.result)):null};});
+app.post('/api/jobs/:id/cancel',async(req,reply)=>{const id=(req.params as {id:string}).id;if(!store.get(id,req.owner))return reply.code(404).send({error:'Not found'});store.cancel(id,req.owner);return {ok:true};});
+for(const [url,file,type] of [['/','index.html','text/html'],['/app.js','app.js','application/javascript'],['/style.css','style.css','text/css']])app.get(url,async(_,reply)=>reply.type(type!).send(readFileSync(new URL(`../public/${file}`,import.meta.url))));
+await app.listen({host:process.env.HOST??'127.0.0.1',port:Number(process.env.PORT??3000)});

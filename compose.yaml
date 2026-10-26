@@ -1,0 +1,28 @@
+services:
+  api:
+    build: .
+    env_file: .env
+    restart: unless-stopped
+    volumes: ["jobs:/app/runtime"]
+    expose: ["3000"]
+    security_opt: ["no-new-privileges:true"]
+    cap_drop: ["ALL"]
+  worker:
+    build: .
+    command: ["npm", "run", "worker"]
+    environment:
+      DB_PATH: runtime/jobs.sqlite
+    restart: unless-stopped
+    volumes: ["jobs:/app/runtime"]
+    security_opt: ["no-new-privileges:true"]
+    cap_drop: ["ALL"]
+  proxy:
+    image: caddy:2.10.2
+    restart: unless-stopped
+    ports: ["80:80", "443:443"]
+    environment:
+      SITE_DOMAIN: ${SITE_DOMAIN:?Set your authorized DNS hostname}
+    volumes: ["./Caddyfile:/etc/caddy/Caddyfile:ro", "caddy:/data"]
+volumes:
+  jobs:
+  caddy:
