@@ -6,3 +6,6 @@
 !src/**
 !public/
 !public/**
+!scripts/
+!scripts/probe.ts
+!scripts/doctor.ts

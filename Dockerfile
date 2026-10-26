@@ -7,6 +7,7 @@ RUN --mount=type=secret,id=proxy_ca \
     npm ci --ignore-scripts --strict-ssl=true
 COPY --chown=node:node src ./src
 COPY --chown=node:node public ./public
+COPY --chown=node:node scripts/probe.ts scripts/doctor.ts ./scripts/
 RUN mkdir runtime && chown node:node runtime
 USER node
 CMD ["npm","start"]

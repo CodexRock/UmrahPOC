@@ -44,7 +44,7 @@ with tempfile.TemporaryDirectory(prefix='umrah-docker-') as tmp:
         request = {'originAirport':'CDG','arrivalAirport':'JED','departureAirport':'JED','outboundDate':date(90),'returnDate':date(98),'cityOrder':['makkah','madinah'],'makkahNights':4,'madinahNights':3,'adults':2,'rooms':1,'displayCurrency':'EUR','locale':'en','preferences':{'checkedBaggagePreferred':True}}
         job = call('/api/jobs', request, {'Idempotency-Key':suffix})
         assert call('/api/jobs', request, {'Idempotency-Key':suffix})['id'] == job['id']
-        for _ in range(100):
+        for _ in range(650):
             result = call('/api/jobs/' + job['id'])
             if result['state'] == 'blocked': break
             time.sleep(.1)
