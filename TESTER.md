@@ -26,3 +26,7 @@ npx --yes --package=node@24 -- node scripts/dev.mjs
 ```
 
 Cette commande télécharge Node 24 dans le cache npm et l’utilise pour le serveur et le worker. Les avertissements EBADENGINE de `npm ci` exécuté avec Node 20 restent possibles ; ils ne doivent pas être confondus avec un échec de téléchargement. Ne lancez pas `npm audit fix --force` : les versions corrigées sont déjà épinglées dans le dépôt.
+
+## Vérifier Codex sur votre propre ordinateur
+
+Le worker ne lance pas Codex pour le moment. L’erreur HTTP 451 observée dans le sandbox cloud ne prouve pas un blocage de votre machine. Dans un deuxième terminal, exécutez `codex --version`, puis `codex login status`, puis `codex plugin list --available --json` si votre version dispose de cette commande. Ces diagnostics ne lancent pas de recherche voyage. Ne transmettez aucun jeton ni fichier d’authentification. Une découverte réussie reste à suivre d’une validation des outils et d’un adaptateur réel.
