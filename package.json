@@ -13,6 +13,7 @@
     "validate:conversation": "node --import tsx scripts/validate-conversation.ts",
     "test:browser": "node scripts/browser-smoke.mjs",
     "check": "tsc --noEmit",
+    "doctor:cli": "node --import tsx scripts/cli-smoke.ts",
     "doctor": "node --import tsx scripts/doctor.ts",
     "probe": "node --import tsx scripts/probe.ts",
     "dev": "node scripts/dev.mjs"

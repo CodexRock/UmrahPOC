@@ -43,3 +43,7 @@ Le [guide officiel Agents API](https://developers.openai.com/api/docs/guides/age
 **Aucun chemin documenté et effectivement démontré ne permet actuellement au worker de ce projet d’appeler ces mêmes plugins voyage et XE en autonomie.** Le chemin CLI candidat échoue au catalogue ; les autres descriptions consultées n’établissent ni une disponibilité de ces outils précis ni une autorisation applicable au worker hébergé.
 
 Le livrable utilisable est donc le **planificateur conversationnel**, ses liens et son calcul validé des prix affichés. Le worker conserve un état bloqué honnête. Hébergement, migration de stockage et polissage UI restent en pause. La prochaine preuve nécessaire est un appel réel d’un de ces mêmes plugins depuis une surface officiellement prise en charge, avant tout autre investissement d’infrastructure. Aucune API fournisseur ou intégration MCP séparée ne sera utilisée pour remplacer cette preuve.
+
+## Nouvelle tentative de réparation CLI
+
+La version officielle stable 0.164.0 a été installée et comparée à la version gérée 0.163.0. Le catalogue refuse les deux avec le même HTTP 451. Un test minimal sans outil révèle aussi un échec d’initialisation du runtime en lecture seule, avant toute réponse du modèle. Les réglages documentés des répertoires d’état/logs n’ont pas suffi. Voir [CLI_DIAGNOSIS.md](CLI_DIAGNOSIS.md) : deux problèmes distincts à vérifier après la mise à jour de l’environnement, sans conclure que tout accès CLI est impossible.
